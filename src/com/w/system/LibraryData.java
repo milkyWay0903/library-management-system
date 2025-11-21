@@ -48,6 +48,30 @@ public class LibraryData {
         return collectionNoToBook.get(collectionNo);
     }
 
+    public List<Book> searchBooksByTitle(String title) {
+        List<Book> result = new ArrayList<>();
+        for (List<Book> books : booksByIsbn.values()) {
+            for (Book book : books) {
+                if (book.getTitle().contains(title)) {
+                    result.add(book);
+                }
+            }
+        }
+        return result;
+    }
+
+    public List<Book> searchBooksByAuthor(String keyword) {
+        List<Book> result = new ArrayList<>();
+        for (List<Book> books : booksByIsbn.values()) {
+            for (Book book : books) {
+                if (book.getAuthor().contains(keyword)) {
+                    result.add(book);
+                }
+            }
+        }
+        return result;
+    }
+
     // -------------------- 用户相关 --------------------
     public boolean isUserIdExists(String userId) {
         return usersById.containsKey(userId);
@@ -66,15 +90,6 @@ public class LibraryData {
         borrowRecords.add(record);
     }
 
-    public BorrowRecords getUnreturnedRecordByCollectionNo(String collectionNo) {
-        for (BorrowRecords record : borrowRecords) {
-            if (record.getBook().getCollectionNo().equals(collectionNo) && record.getReturnTime() == null) {
-                return record;
-            }
-        }
-        return null;
-    }
-
     public List<BorrowRecords> getAllBorrowRecords() {
         return new ArrayList<>(borrowRecords);
     }
@@ -82,6 +97,16 @@ public class LibraryData {
     // -------------------- 预约相关 --------------------
     public void addReservation(Reservation reservation) {
         reservations.add(reservation);
+    }
+
+    public boolean isReserved(String collectionNo, String userId) {
+        for (Reservation reservation : reservations) {
+            if (reservation.getBook().getCollectionNo().equals(collectionNo) &&
+                    reservation.getUser().getId().equals(userId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Reservation getFirstReservationByBook(Book book) {
